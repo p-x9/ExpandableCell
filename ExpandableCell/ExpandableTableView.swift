@@ -129,6 +129,8 @@ extension ExpandableTableView: UITableViewDataSource, UITableViewDelegate {
         
         guard let cell = self.cellForRow(at: indexPath) as? ExpandableCell else { return }
         cell.close()
+        
+        expandableDelegate?.expandableTableView(self, didCloseRowAt: indexPath)
 
     }
     
@@ -323,6 +325,12 @@ extension ExpandableTableView {
         }
         
         self.deleteRows(at: expandedIndexPaths, with: animation)
+        
+        indexPaths.forEach({
+            //追加
+            self.expandableDelegate?.expandableTableView(self, didCloseRowAt: $0)
+        })
+        
         return indexPaths
     }
     
@@ -331,6 +339,7 @@ extension ExpandableTableView {
         if cell.isExpanded() {
             close(indexPath: indexPath)
         }
+        self.expandableDelegate?.expandableTableView(self, didCloseRowAt: indexPath)
     }
     
     open override func reloadData() {
@@ -358,6 +367,13 @@ extension ExpandableTableView {
         }
 
         self.deleteRows(at: expandedIndexPaths, with: animation)
+        
+        
+        //追加
+        indexPaths.forEach({
+            self.expandableDelegate?.expandableTableView(self, didCloseRowAt: $0)
+        })
+        
         return indexPaths
     }
     
